@@ -1,6 +1,6 @@
 import numpy as np
-from math import erf, sqrt, pi
-from scipy.special import erfinv
+from math import sqrt, pi, comb
+from scipy.special import erf, erfinv  # erf/erfinv are vectorized (NumPy-aware)
 
 
 class normal:
@@ -56,10 +56,11 @@ class normal:
         return np.prod(pdf_uni, axis=0)
 
     # ----------------------------------------------------
-    # CDF (univariate only)
+    # CDF (univariate, vectorized over arrays)
     # ----------------------------------------------------
     def cdf(self, x):
-        x = np.asarray(x)
+        """Standard-Normal-style CDF, evaluated element-wise on scalars or arrays."""
+        x = np.asarray(x, dtype=float)
         z = (x - self.mean) / (self.std * sqrt(2))
         return 0.5 * (1 + erf(z))
 
@@ -91,7 +92,7 @@ class normal:
             df = np.prod(np.arange(1, i, 2)) if i > 0 else 1
 
             moment += (
-                    np.math.comb(k, i)
+                    comb(k, i)
                     * (self.mean ** (k - i))
                     * (self.std ** i)
                     * df
