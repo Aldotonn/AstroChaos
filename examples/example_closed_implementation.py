@@ -8,7 +8,7 @@ from src.init.cr3bp import Cr3bp
 from src.init.ephemeris import Ephemeris
 from src.propagation.ephemeris_propagator import EphemerisSHPropagator
 from src.init.load_kernels import load_kernels_moon_pot
-from AstroChaos.Covariance import covariance_from_state
+from astro_chaos.Covariance import covariance_from_state
 
 load_kernels_moon_pot()
 

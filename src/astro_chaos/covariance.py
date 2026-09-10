@@ -1,7 +1,7 @@
 import numpy as np
-from AstroChaos.Normal import normal
-from AstroChaos.HermiteBase import hermite
-from AstroChaos.FitRegression import regression
+from astro_chaos.Normal import normal
+from astro_chaos.HermiteBase import hermite
+from astro_chaos.FitRegression import regression
 from math import ceil
 
 

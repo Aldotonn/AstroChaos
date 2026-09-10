@@ -1,9 +1,11 @@
+from math import erf, sqrt, pi, comb
+
 import numpy as np
-from math import erf, sqrt, pi
+from numpy.typing import NDArray
 from scipy.special import erfinv
 
 
-class normal:
+class NormalDistribution:
     """
     Vectorized IID Normal distribution.
 
@@ -18,9 +20,6 @@ class normal:
         self.std = float(std)
         self.d = int(d)
 
-    # ----------------------------------------------------
-    # Sampling
-    # ----------------------------------------------------
     def sample(self, n, rule="random"):
         """
         Returns samples of shape (d, n).
@@ -39,62 +38,68 @@ class normal:
         else:
             raise ValueError(f"Sampling rule '{rule}' not supported.")
 
-    # ----------------------------------------------------
-    # PDF (multivariate independent)
-    # ----------------------------------------------------
-    def pdf(self, x):
+    def _check_shape(self, samples: NDArray[np.float64]):
+        if samples.ndim not in (1, 2):
+            raise ValueError(f"Samples shape '{samples.shape}' not supported.")
+        if samples.shape[0] != self.d:
+            shape = self.d, samples.shape[1] if samples.ndim == 2 else self.d
+            raise ValueError(f"Samples should have (shape {shape}")
+
+    def pdf(self, samples: NDArray[np.float64]) -> NDArray[np.float64]:
         """
+        PDF (multivariate independent)
+
         x shape = (d, n) or (d,)
         returns pdf for each sample.
         """
 
-        x = np.asarray(x)
-        z = (x - self.mean) / self.std
+        samples = np.asarray(samples)
+        self._check_shape(samples)
+
+        z = (samples - self.mean) / self.std
         pdf_uni = np.exp(-0.5 * z * z) / (self.std * sqrt(2 * pi))
 
         # multivariate independent: product along axis 0
         return np.prod(pdf_uni, axis=0)
 
-    # ----------------------------------------------------
-    # CDF (univariate only)
-    # ----------------------------------------------------
-    def cdf(self, x):
-        x = np.asarray(x)
-        z = (x - self.mean) / (self.std * sqrt(2))
+    def cdf(self, samples: NDArray[np.float64]) -> float:
+        """
+        CDF (univariate only)  # TODO: does this mean that the shape is 1D?
+        """
+        samples = np.asarray(samples)
+        self._check_shape(samples)
+
+        z = (samples - self.mean) / (self.std * sqrt(2))
         return 0.5 * (1 + erf(z))
 
-    # ----------------------------------------------------
-    # Vectorized inverse CDF
-    # ----------------------------------------------------
     def ppf(self, u):
         """
+        Vectorized inverse CDF
+
         u shape = (d, n)
         """
         return self.mean + self.std * sqrt(2) * erfinv(2 * u - 1)
 
-    icdf = ppf  # alias
-
-    # ----------------------------------------------------
-    # Raw moment (same for each component)
-    # ----------------------------------------------------
-    def mom(self, k):
+    def mom(self, n_elements: int) -> float:
         """
         Raw moment of univariate Normal distribution.
         """
-        k = int(k)
+        n_elements = int(n_elements)
         moment = 0.0
 
-        for i in range(0, k + 1):
+        for i in range(0, n_elements + 1):
             if i % 2 == 1:
                 continue
             # double factorial for even i
             df = np.prod(np.arange(1, i, 2)) if i > 0 else 1
 
             moment += (
-                    np.math.comb(k, i)
-                    * (self.mean ** (k - i))
+                    comb(n_elements, i)
+                    * (self.mean ** (n_elements - i))
                     * (self.std ** i)
                     * df
             )
 
         return moment
+
+    icdf = ppf  # alias

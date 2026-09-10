@@ -8,10 +8,10 @@ from src.init.cr3bp import Cr3bp
 from src.init.ephemeris import Ephemeris
 from src.propagation.ephemeris_propagator import EphemerisSHPropagator
 from src.init.load_kernels import load_kernels_moon_pot
-from AstroChaos.Normal import normal
-from AstroChaos.HermiteBase import hermite
-from AstroChaos.FitRegression import regression
-from AstroChaos.Covariance import covariance
+from astro_chaos.Normal import normal
+from astro_chaos.HermiteBase import hermite
+from astro_chaos.FitRegression import regression
+from astro_chaos.Covariance import covariance
 
 load_kernels_moon_pot()
 

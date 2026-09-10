@@ -8,10 +8,10 @@ from src.init.cr3bp import Cr3bp
 from src.init.ephemeris import Ephemeris
 from src.propagation.ephemeris_propagator import EphemerisSHPropagator
 from src.init.load_kernels import load_kernels_moon_pot
-from AstroChaos.Normal import normal
-from AstroChaos.HermiteBase import hermite
-from AstroChaos.FitRegression import regression
-from AstroChaos.Covariance import covariance
+from astro_chaos.Normal import normal
+from astro_chaos.HermiteBase import hermite
+from astro_chaos.FitRegression import regression
+from astro_chaos.Covariance import covariance
 import glob
 import math
 import matplotlib.pyplot as plt
@@ -322,12 +322,12 @@ Sigma_diff_tf = Sigma_pce - Sigma_mc
 
 
 # Save full time series (K snapshots)
-save_matrix_json("Sigma_MC_time.json",  Sigma_mc_time)
+save_matrix_json("Sigma_MC_time.json", Sigma_mc_time)
 save_matrix_json(f"Sigma_PCE_time_order{p_order}.json", Sigma_pce_time)
 
 print("Saved: Sigma_MC_time.json and Sigma_PCE_time.json")
 
-save_matrix_json("Sigma_MC_tf.json",  Sigma_mc)
+save_matrix_json("Sigma_MC_tf.json", Sigma_mc)
 save_matrix_json(f"Sigma_PCE_tf_order{p_order}.json", Sigma_pce)
 
 print("Saved: Sigma_MC_tf.json and Sigma_PCE_tf.json")
